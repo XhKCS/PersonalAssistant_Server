@@ -1,2 +1,2 @@
 # PersonalAssistant_Server
-个人助手项目后端
+软件测试实验二：个人助手项目，后端部分
