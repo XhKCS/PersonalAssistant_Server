@@ -20,6 +20,6 @@ public interface DailyRecordMapper {
     @Delete("delete from daily where dailyId=#{dailyId}")
     int deleteDailyById(int dailyId);
 
-    @Update("update daily set title=#{title}, content=#{content}, createTime=#{createTime} where dailyId=#{dailyId}")
+    @Update("update daily set title=#{title}, content=#{content} where dailyId=#{dailyId}")
     int updateDaily(DailyRecord updatedDaily);
 }

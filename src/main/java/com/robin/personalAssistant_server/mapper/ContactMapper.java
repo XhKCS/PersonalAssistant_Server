@@ -26,6 +26,6 @@ public interface ContactMapper {
     @Delete("delete from contact where contactId=#{contactId}")
     int deleteContactById(int contactId);
 
-    @Update("update contact set contactName=#{contactName}, phoneNumber=#{phoneNumber}, createTime=#{createTime} where contactId=#{contactId}")
+    @Update("update contact set contactName=#{contactName}, phoneNumber=#{phoneNumber} where contactId=#{contactId}")
     int updateContact(Contact updatedContact);
 }
