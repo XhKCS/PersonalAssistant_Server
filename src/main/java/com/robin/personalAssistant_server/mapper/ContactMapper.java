@@ -11,11 +11,14 @@ public interface ContactMapper {
     @Select("select * from contact")
     List<Contact> selectContacts();
 
+    @Select("select * from contact where contactName=#{contactName}")
+    List<Contact> selectContactsByName(String contactName);
+
     @Select("select * from contact where contactId=#{contactId}")
     Contact selectContactById(int contactId);
 
-    @Select("select * from contact where contactName=#{contactName}")
-    Contact selectContactByName(String contactName);
+    @Select("select * from contact where phoneNumber=#{phoneNumber}")
+    Contact selectContactByPhoneNumber(String phoneNumber);
 
     @Insert("insert into contact values (null, #{contactName}, #{phoneNumber}, #{createTime})")
     int insertContact(Contact contact);

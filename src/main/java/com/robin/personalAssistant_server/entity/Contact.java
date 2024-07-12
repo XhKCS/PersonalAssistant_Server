@@ -5,8 +5,8 @@ import com.robin.personalAssistant_server.util.DateUtil;
 // 联系人
 public class Contact {
     private int contactId;
-    private String contactName; //这是这四个实体类中唯一不能重名的
-    private String phoneNumber; //需要验证有效性（是否是11位整数）
+    private String contactName; //思考了一下，联系人应该可以重名（一个人可以有多个电话号码），但电话号码不能重复
+    private String phoneNumber; //需要验证有效性（是否是11位整数；是否不重复）
     private String createTime; //创建时间
 
     public Contact() {}

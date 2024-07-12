@@ -24,8 +24,12 @@ public class ContactBiz {
         return mapper.selectContactById(contactId);
     }
 
-    public Contact getContactByName(String contactName) {
-        return mapper.selectContactByName(contactName);
+    public Contact getContactByPhoneNumber(String phoneNumber) {
+        return mapper.selectContactByPhoneNumber(phoneNumber);
+    }
+
+    public List<Contact> getContactsByName(String contactName) {
+        return mapper.selectContactsByName(contactName);
     }
 
     public boolean addContact(Contact contact) {

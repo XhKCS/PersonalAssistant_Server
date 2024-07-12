@@ -12,12 +12,12 @@ public class JudgeUtil {
     }
 
     public static boolean isInteger(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch(Exception e){
-            return false;
+        for (char ch : str.toCharArray()) {
+            if (!(ch >= '0' && ch <= '9')) {
+                return false;
+            }
         }
+        return true;
     }
 
 }
