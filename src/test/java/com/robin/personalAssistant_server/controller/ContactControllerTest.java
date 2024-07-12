@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -69,6 +70,42 @@ class ContactControllerTest {
     }
 
     @Test
+    void listByName() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        //正常的测试用例
+        Map<String, String> request1 = new HashMap<>();
+        request1.put("contactName", "小明");
+        String jsonRequest1 = objectMapper.writeValueAsString(request1);
+        System.out.println("jsonRequest1: "+jsonRequest1);
+        MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders
+                .post("/contact/listByName")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8.name())
+                .content(jsonRequest1)).andReturn();
+        String jsonResponse1 = result1.getResponse().getContentAsString();
+        System.out.println("jsonResponse1: "+jsonResponse1);
+        //异常的测试用例
+        Map<String, String> request2 = new HashMap<>();
+        request2.put("contactName", "小A"); //contactName在数据库中不存在
+        String jsonRequest2 = objectMapper.writeValueAsString(request2);
+        System.out.println("jsonRequest2: "+jsonRequest2);
+        MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders
+                .post("/contact/listByName")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8.name())
+                .content(jsonRequest2)).andReturn();
+        String jsonResponse2 = result2.getResponse().getContentAsString();
+        System.out.println("jsonResponse2: "+jsonResponse2);
+
+        //分别检查测试结果是否与预期一致
+        Map<String, Object> responseMap1 = objectMapper.readValue(jsonResponse1, Map.class);
+        assertEquals(responseMap1.get("isOk"), true);
+        assertNotNull(responseMap1.get("contactList"));
+        Map<String, Object> responseMap2 = objectMapper.readValue(jsonResponse2, Map.class);
+        assertEquals(responseMap2.get("isOk"), false);
+    }
+
+    @Test
     void getById() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         //正常的测试用例
@@ -119,15 +156,15 @@ class ContactControllerTest {
     }
 
     @Test
-    void getByName() throws Exception {
+    void getByPhoneNumber() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         //正常的测试用例
         Map<String, String> request1 = new HashMap<>();
-        request1.put("contactName", "小明");
+        request1.put("phoneNumber", "12345678900");
         String jsonRequest1 = objectMapper.writeValueAsString(request1);
         System.out.println("jsonRequest1: "+jsonRequest1);
         MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders
-                .post("/contact/getByName")
+                .post("/contact/getByPhoneNumber")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8.name())
                 .content(jsonRequest1)).andReturn();
@@ -135,16 +172,28 @@ class ContactControllerTest {
         System.out.println("jsonResponse1: "+jsonResponse1);
         //异常的测试用例
         Map<String, String> request2 = new HashMap<>();
-        request2.put("contactName", "小A"); //contactName在数据库中不存在
+        request2.put("phoneNumber", "123456");  //手机号码不是11位
         String jsonRequest2 = objectMapper.writeValueAsString(request2);
         System.out.println("jsonRequest2: "+jsonRequest2);
         MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders
-                .post("/contact/getByName")
+                .post("/contact/getByPhoneNumber")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8.name())
                 .content(jsonRequest2)).andReturn();
         String jsonResponse2 = result2.getResponse().getContentAsString();
         System.out.println("jsonResponse2: "+jsonResponse2);
+
+        Map<String, String> request3 = new HashMap<>();
+        request3.put("phoneNumber", "12345678..x");  //手机号码包含非数字
+        String jsonRequest3 = objectMapper.writeValueAsString(request3);
+        System.out.println("jsonRequest3: "+jsonRequest3);
+        MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders
+                .post("/contact/getByPhoneNumber")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8.name())
+                .content(jsonRequest3)).andReturn();
+        String jsonResponse3 = result3.getResponse().getContentAsString();
+        System.out.println("jsonResponse3: "+jsonResponse3);
 
         //分别检查测试结果是否与预期一致
         Map<String, Object> responseMap1 = objectMapper.readValue(jsonResponse1, Map.class);
@@ -152,6 +201,8 @@ class ContactControllerTest {
         assertNotNull(responseMap1.get("contact"));
         Map<String, Object> responseMap2 = objectMapper.readValue(jsonResponse2, Map.class);
         assertEquals(responseMap2.get("isOk"), false);
+        Map<String, Object> responseMap3 = objectMapper.readValue(jsonResponse3, Map.class);
+        assertEquals(responseMap3.get("isOk"), false);
     }
 
     @Test
@@ -159,8 +210,8 @@ class ContactControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         //正常的测试用例
         Map<String, String> request1 = new HashMap<>();
-        request1.put("contactName", "小遥");
-        request1.put("phoneNumber", "12345678900");
+        request1.put("contactName", "小智");
+        request1.put("phoneNumber", "12345678903");
         String jsonRequest1 = objectMapper.writeValueAsString(request1);
         System.out.println("jsonRequest1: "+jsonRequest1);
         MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders
@@ -172,8 +223,8 @@ class ContactControllerTest {
         System.out.println("jsonResponse1: "+jsonResponse1);
         //异常的测试用例
         Map<String, String> request2 = new HashMap<>();
-        request2.put("height", String.valueOf(5)); //height超出正常范围
-        request2.put("weight", String.valueOf(85));
+        request2.put("contactName", ""); //联系人姓名为空
+        request2.put("phoneNumber", "12345678904");
         String jsonRequest2 = objectMapper.writeValueAsString(request2);
         System.out.println("jsonRequest2: "+jsonRequest2);
         MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders
@@ -185,8 +236,8 @@ class ContactControllerTest {
         System.out.println("jsonResponse2: "+jsonResponse2);
 
         Map<String, String> request3 = new HashMap<>();
-        request3.put("height", String.valueOf(1.8));
-        request3.put("weight", "aaa"); //weight不是数
+        request3.put("contactName", "小A");
+        request3.put("phoneNumber", "123456"); //手机号码不是11位数字
         String jsonRequest3 = objectMapper.writeValueAsString(request3);
         System.out.println("jsonRequest3: "+jsonRequest3);
         MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders
@@ -207,6 +258,7 @@ class ContactControllerTest {
 
     @Test
     void deleteById() {
+
     }
 
     @Test

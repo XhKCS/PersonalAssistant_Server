@@ -34,11 +34,11 @@ public class ContactController {
     }
 
     @RequestMapping("/listByName")
-    public Map<String, Object> getByName(@RequestBody Map<String, String> request) {
+    public Map<String, Object> listByName(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         String contactName = request.get("contactName");
         List<Contact> contactList = biz.getContactsByName(contactName);
-        if (contactList != null) {
+        if (contactList != null && !contactList.isEmpty()) {
             response.put("isOk", true);
             response.put("contactList", contactList);
             response.put("msg", "查询成功");
